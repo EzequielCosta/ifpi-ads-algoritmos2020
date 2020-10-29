@@ -30,6 +30,8 @@ def main():
                 print('Celular cadastrado com sucesso!')
             elif (opcao == 2):
                 lista_celular(celulares)
+            elif (opcao == 3):
+                buscar_celular(celulares)
             else:
                 print("\nVocê digitou uma opção errada!\n")
                 continue
@@ -48,6 +50,7 @@ def tela_principal():
     menu = '***** App Jobs Cell *****\n'
     menu += '1 - Novo celular\n'
     menu += '2 - Listar celulares\n'
+    menu += '3 - Buscar celulares\n'
     menu += '0 - sair\n'
     menu += '\nopcao >>> '
 
@@ -105,29 +108,10 @@ def lista_celular(celulares):
             print('Nome:', celular['nome'])
             print('Marca:', celular['marca'])
             print('Valor:', celular['valor'])
-            print('Tela:', celular['tela'])
-            print('Câmera Frontal:', celular['cam_frontal'])
             print(12 * '---')
     else:
         print("Sem dados")
 
-
-def lista_vazia(lista):
-    return bool(len(lista))
-
-def verifica_input(palavra:str, tipo_palavra):
-    # tipo_palavra = 'nume' -> numerico
-    # tipo_palavra = 'word' -> palavra
-    # tipo_palavra = 'nurd' -> alfanumerico
-
-    if (tipo_palavra == "nume" and not(palavra.isnumeric()) ):
-        return False
-    elif (tipo_palavra == "word" and not(palavra.isalpha())):
-        return False
-    elif (tipo_palavra == "nurd" and not (palavra.isalnum())):
-        return False
-
-    return True
 
 def fecha_conexao(nome_arquivo, celulares):
     dados = json.dumps(celulares)
@@ -157,6 +141,104 @@ def is_numero(palavra):
         return True
     except:
         return False
+
+
+def buscar_celular(celulares):
+    cont = 0
+    buscar = input("Busque pelo o nome ou marca: ")
+    for indice in range(len(celulares)):
+        if ((buscar in (celulares[indice]["nome"]).lower()) or (buscar in (celulares[indice]["marca"]).lower()) ):
+            print('ID: ', indice)
+            print('Nome: ', celulares[indice]['nome'])
+            print('Marca: ', celulares[indice]['marca'])
+            print(12 * '---')
+            cont = 1
+
+    if (cont == 1):
+
+        id = int(input("\nDigite o ID do celular selecionado: "))
+        celular_selecionado = celulares[id]
+        menu = "Escolha a opção:\n\n"
+        menu += "1-Mostrar detalhes\n"
+        menu += "2-Remover celular\n"
+        menu += "3-Editar Celular\n"
+        menu += "4-Duplicar registro\n"
+        print(menu)
+
+        opcao = int(input("Digite a opção: "))
+
+        if (opcao == 1):
+            mostrar_detalhe(celular_selecionado)
+            print('\n')
+        elif (opcao == 2):
+            celulares = remover_celular(celulares,id)
+            print("Removido com sucesso!\n")
+        elif (opcao == 3):
+            resultado = editar_celular(celulares,id)
+            if(resultado):
+                celulares = resultado
+                print("Editado com sucesso")
+            else:
+                print("Não foi possível alterar")
+        elif (opcao == 4):
+            celulares = duplicar_celular(celular_selecionado,celulares)
+            print("Duplicado com sucesso")
+
+
+def mostrar_detalhe(celular_selecionado):
+
+    print('Nome: ', celular_selecionado['nome'])
+    print('Marca: ', celular_selecionado['marca'])
+    print('Valor: ', celular_selecionado['valor'])
+    print('Tela: ', celular_selecionado['tela'])
+    print('Câmera Frontal: ', celular_selecionado['cam_frontal'])
+    print('\n')
+
+def remover_celular(celulares,indice):
+    celulares.pop(indice)
+    return celulares
+
+
+def editar_celular(celulares,indice):
+
+    menu = "O que você deseja editar:\n\n"
+
+    menu += "1-Nome\n"
+    menu += "2-Marca\n"
+    menu += "3-Valor\n"
+    menu += "4-Tela\n"
+    menu += "5-Câmera\n"
+    print(menu)
+    opcao = int(input("Digite a opção: "))
+
+    if (opcao == 1):
+        nome = input("Digite o novo nome: ")
+        celulares[indice]["nome"] = nome
+    elif (opcao == 2):
+        marca = input("Digite a nova marca: ")
+        celulares[indice]["marca"] = marca
+    elif (opcao == 3):
+        valor = input("Digite o novo valor: ")
+        celulares[indice]["valor"] = valor
+    elif (opcao == 4):
+        tela = input("Digite o novo tamanho de tela: ")
+        celulares[indice]["tela"] = tela
+    elif (opcao == 5):
+        camera =  input("Digite se possui camera (sim/nao): ")
+        if (camera == 'sim' or camera == 'nao'):
+            celulares[indice]["cam_frontal"] = camera
+    else:
+        opcao = 0
+    if (opcao != 0):
+        return celulares
+    else:
+        return 0
+
+
+def duplicar_celular(celular_selecionado,celulares):
+    celulares.append(celular_selecionado)
+    return celulares
+
 
 
 
